@@ -1,6 +1,7 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Portemonnaie} from "../portemonnaies/entities/porte-monnaies.entity.js";
 import {Depense} from "../depenses/depenses.entity.js";
+import {Participer} from "../portemonnaies/entities/participer.entity.js";
 
 @Entity()
 export class Compte {
@@ -25,4 +26,7 @@ export class Compte {
 
     @OneToMany(() => Depense, (d) => d.saisiPar)
     depensesSaisies: Depense[];
+
+    @OneToMany(() => Participer, (participer) => participer.compte)
+    participations: Participer[];
 }
