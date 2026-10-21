@@ -1,11 +1,10 @@
-import Button from "../shared/Button.jsx";
 
 function HomePage() {
 
 return (
     <>
         <div>
-            <Button children={"Se connecter"}/>
+            <h1>Les bons comptes</h1>
         </div>
     </>
 );
