@@ -34,4 +34,20 @@ export class PortemonnaiesService {
         return portemonnaie;
     }
 
+    async findAllForCompte(compteId: number) {
+        const participations = await this.participationRepository.find({
+            where: { compte: { id: compteId } },
+            relations: { portemonnaie: true, compte: true },
+        });
+
+        return {
+            ouverts: participations
+                .filter((p) => p.dateAccepte !== null && p.portemonnaie.status === true)
+                .map((p) => p.portemonnaie),
+            clos: participations
+                .filter((p) => p.dateAccepte !== null && p.portemonnaie.status === false)
+                .map((p) => p.portemonnaie),
+        };
+    }
+
 }
