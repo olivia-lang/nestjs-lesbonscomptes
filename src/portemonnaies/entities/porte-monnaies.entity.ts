@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, type Relation} from "typeorm";
 import {Compte} from "../../comptes/comptes.entity.js";
 import {Depense} from "../../depenses/depenses.entity.js";
 import {Participer} from "./participer.entity.js";
@@ -16,11 +16,11 @@ export class Portemonnaie {
     status: boolean;
 
     @ManyToOne(() => Compte, (compte) => compte.portemonnaies)
-    createur: Compte;
+    createur: Relation<Compte>;
 
     @OneToMany(() => Depense, (depense) => depense.portemonnaie)
-    depenses: Depense[];
+    depenses: Relation<Depense[]>;
 
     @OneToMany(() => Participer, (participer) => participer.portemonnaie)
-    participations: Participer[];
+    participations: Relation<Participer[]>;
 }

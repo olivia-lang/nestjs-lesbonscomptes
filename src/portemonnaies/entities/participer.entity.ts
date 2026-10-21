@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn, type Relation} from "typeorm";
 import {Portemonnaie} from "./porte-monnaies.entity.js";
 import {Depense} from "../../depenses/depenses.entity.js";
 import {Compte} from "../../comptes/comptes.entity.js";
@@ -15,8 +15,8 @@ export class Participer {
     dateAccepte: Date | null;
 
     @ManyToOne(() => Portemonnaie, (pm) => pm.participations)
-    portemonnaie: Portemonnaie;
+    portemonnaie: Relation<Portemonnaie>;
 
     @ManyToOne(() => Compte, (compte) => compte.participations)
-    compte: Compte;
+    compte: Relation<Compte>;
 }
