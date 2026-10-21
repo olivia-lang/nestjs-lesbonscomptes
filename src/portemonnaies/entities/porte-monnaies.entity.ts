@@ -1,5 +1,6 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Compte} from "../../comptes/comptes.entity.js";
+import {Depense} from "../../depenses/depenses.entity.js";
 
 @Entity()
 export class Portemonnaie {
@@ -15,4 +16,7 @@ export class Portemonnaie {
 
     @ManyToOne(() => Compte, (compte) => compte.portemonnaies)
     createur: Compte;
+
+    @OneToMany(() => Depense, (depense) => depense.portemonnaie)
+    depenses: Depense[];
 }
