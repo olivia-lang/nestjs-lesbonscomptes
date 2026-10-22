@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import ListeSimple from "../ListeSimple.jsx";
 import {listerPortemonnaies} from "../../api/porte-monnaies.js";
+import ListeCarte from "../ListeCarte.jsx";
 
 const COMPTE_ID_SIMULE = 1;
 
@@ -22,13 +22,7 @@ export default function PortemonnaiesList() {
             <h3 className="h3 mb-3">Mes porte-monnaies</h3>
 
             <div className="card p-3 bg-white">
-                <p>Porte-monnaies actifs</p>
-                <ListeSimple items={portemonnaies.ouverts} />
-            </div>
-
-            <div className="card p-3 bg-white">
-                <p>Porte-monnaies clos</p>
-                <ListeSimple items={portemonnaies.clos} />
+                <ListeCarte items={portemonnaies} />
             </div>
         </div>
     );

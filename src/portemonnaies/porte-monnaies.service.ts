@@ -38,16 +38,12 @@ export class PortemonnaiesService {
         const participations = await this.participationRepository.find({
             where: { compte: { id: compteId } },
             relations: { portemonnaie: true, compte: true },
+            order: { portemonnaie: { dateCreation: 'DESC' } },
         });
 
-        return {
-            ouverts: participations
-                .filter((p) => p.dateAccepte !== null && p.portemonnaie.status === true)
-                .map((p) => p.portemonnaie),
-            clos: participations
-                .filter((p) => p.dateAccepte !== null && p.portemonnaie.status === false)
-                .map((p) => p.portemonnaie),
-        };
+        return participations
+            .filter((p) => p.dateAccepte !== null)
+            .map((p) => p.portemonnaie);
     }
 
 }
