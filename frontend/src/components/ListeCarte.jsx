@@ -1,4 +1,6 @@
 import {Link} from "react-router";
+import { Users } from 'lucide-react';
+import {formatDateFr} from "../utils/formatDate.js";
 
 export default function ListeCarte({ items }) {
     if (items.length === 0) return <p>Aucun</p>;
@@ -19,7 +21,17 @@ export default function ListeCarte({ items }) {
                         minWidth: '160px',
                     }}
                 >
-                    {pm.libelle}
+                    <div>
+                        <p className="fs-4 fw-semibold text-dark">{pm.libelle}</p>
+                    </div>
+                    <div className="text-secondary">
+                        <span>{formatDateFr(pm.dateCreation)}</span>
+                        <div className="d-flex align-items-center gap-1">
+                            <Users size={18} />
+                            {pm.nombreParticipants}
+                        </div>
+                    </div>
+
                 </Link>
             ))}
         </div>
