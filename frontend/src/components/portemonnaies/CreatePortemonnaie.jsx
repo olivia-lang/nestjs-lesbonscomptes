@@ -31,7 +31,7 @@ export default function CreerPortemonnaie() {
     return (
         <>
             <div className="container mt-4">
-                <h1 className="h3 mb-3">Nouveau porte-monnaie</h1>
+                <h3 className="h3 mb-3">Nouveau porte-monnaie</h3>
 
                 <div className="card p-3 bg-white">
                     <Formik

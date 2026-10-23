@@ -2,6 +2,7 @@ import './App.css'
 import {BrowserRouter, Routes, Route} from "react-router";
 import HomePage from "./components/HomePage.jsx";
 import CreerPortemonnaie from "./components/portemonnaies/CreatePortemonnaie.jsx";
+import PortemonnaiesList from "./components/portemonnaies/PortemonnaiesList.jsx";
 
 function App() {
 
@@ -10,6 +11,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/portemonnaies" element={<PortemonnaiesList />} />
           <Route path="/portemonnaies/nouveau" element={<CreerPortemonnaie />} />
         </Routes>
       </BrowserRouter>
