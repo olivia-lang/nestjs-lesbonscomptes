@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import {listerPortemonnaies} from "../../api/porte-monnaies.js";
 import ListeCarte from "../ListeCarte.jsx";
+import FiltresPortemonnaies from "./PortemonnaiesFiltres.jsx";
 
 const COMPTE_ID_SIMULE = 1;
 
 export default function PortemonnaiesList() {
     const [portemonnaies, setPortemonnaies] = useState(null);
     const [erreur, setErreur] = useState(null);
+    const [filtres, setFiltres] = useState("tous");
 
     useEffect(() => {
         listerPortemonnaies(COMPTE_ID_SIMULE)
@@ -17,13 +19,20 @@ export default function PortemonnaiesList() {
     if (erreur) return <p style={{ color: 'red' }}>{erreur}</p>;
     if (!portemonnaies) return <p>Chargement...</p>;
 
+    const portemonnaiesFiltres = portemonnaies.filter((pm) => {
+        if (filtres === 'ouverts') return pm.status === true;
+        if (filtres === 'clos') return pm.status === false;
+        return true;
+    });
+
     return (
         <div className="container mt-4">
             <div className="row g-5">
                 <div className="col-lg-8">
                     <h3 className="h3 mb-3">Mes porte-monnaies</h3>
                     <div className="card p-3 bg-white">
-                        <ListeCarte items={portemonnaies} />
+                        <FiltresPortemonnaies filtre={filtres} onChange={setFiltres} />
+                        <ListeCarte items={portemonnaiesFiltres} />
                     </div>
                 </div>
 
