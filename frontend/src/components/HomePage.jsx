@@ -21,6 +21,29 @@ function HomePage() {
             </div>
         );
     }
+        return <TableauDeBord prenom={compte.prenom} />;
+}
 
- }
+// ce que voit un compte connecté 
+function TableauDeBord({ prenom }) {
+    const [invitations, setInvitations] = useState(null);
+    const [erreur, setErreur] = useState(null);
+
+    const charger = useCallback(() => {
+        mesInvitations()
+            .then(setInvitations)
+            .catch((err) => setErreur(err.message));
+    }, []);
+
+    useEffect(charger, [charger]);
+
+    return (
+        <div className="container mt-4">
+            <h1 className="h3 mb-4">Bonjour {prenom}</h1>
+            {erreur && <div className="alert alert-danger">{erreur}</div>}
+            {invitations && <MesInvitations invitations={invitations} onChange={charger} />}
+        </div>
+    );
+}
+
 export default HomePage;
