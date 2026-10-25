@@ -7,6 +7,8 @@ import {Portemonnaie} from "./portemonnaies/entities/porte-monnaies.entity.js";
 import {Participer} from "./portemonnaies/entities/participer.entity.js";
 import {PortemonnaiesModule} from "./portemonnaies/porte-monnaies.module.js";
 import {ComptesModule} from "./comptes/comptes.module.js";
+import {AuthModule} from "./auth/auth.module.js";
+import {InvitationsModule} from "./invitations/invitations.module.js";
 
 @Module({
   imports: [
@@ -21,11 +23,13 @@ import {ComptesModule} from "./comptes/comptes.module.js";
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
         entities: [Compte, Portemonnaie, Depense, Participer],
-        synchronize: false, // ok en dev, jamais en prod
+        synchronize: config.get('DB_SYNCHRONIZE') === 'true', // ok en dev, jamais en prod
       }),
     }),
+    AuthModule,
     ComptesModule,
     PortemonnaiesModule,
+    InvitationsModule,
   ],
 })
 export class AppModule {}

@@ -11,6 +11,11 @@ async function request(path, options = {}) {
         },
     });
 
+    if (response.status === 401 && token) {
+        localStorage.removeItem('token');
+        window.dispatchEvent(new Event('session-expiree'));
+    }
+
     if (!response.ok) {
         const error = await response.json().catch(() => ({ message: response.statusText }));
         throw new Error(error.message || 'Erreur serveur');
