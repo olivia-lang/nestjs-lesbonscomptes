@@ -42,6 +42,7 @@ export default function AuthProvider({ children }) {
     const seDeconnecter = useCallback(() => {
         localStorage.removeItem('token');
         setCompte(null);
+        setPortemonnaies(null);
     }, []);
 
     return (
