@@ -1,6 +1,7 @@
 import {useState} from "react";
 import * as Yup from 'yup';
 import {ErrorMessage, Field, Form, Formik} from "formik";
+import {Link} from "react-router";
 import {creerCompte} from "../../api/comptes.js";
 
 // mêmes règles que le DTO côté back (CreateCompteDto)
@@ -36,7 +37,7 @@ export default function CreerCompte() {
     const [compteCree, setCompteCree] = useState(null);
     const [erreur, setErreur] = useState(null);
 
-    async function handleSubmit({ confirmation: _, ...values }, { resetForm, setSubmitting }) {
+    async function handleSubmit(values, { resetForm, setSubmitting }) {
         setErreur(null);
         try {
             const compte = await creerCompte(values);
@@ -79,7 +80,7 @@ export default function CreerCompte() {
                 {erreur && <div className="alert alert-danger mt-3">{erreur}</div>}
                 {compteCree && (
                     <div className="alert alert-success mt-3">
-                        Compte créé pour {compteCree.prenom} (@{compteCree.pseudo})
+                        Compte créé pour {compteCree.prenom} (@{compteCree.pseudo}). <Link to="/connexion">Se connecter</Link>
                     </div>
                 )}
             </div>

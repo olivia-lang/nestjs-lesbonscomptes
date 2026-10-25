@@ -7,6 +7,7 @@ import {Portemonnaie} from "./portemonnaies/entities/porte-monnaies.entity.js";
 import {Participer} from "./portemonnaies/entities/participer.entity.js";
 import {PortemonnaiesModule} from "./portemonnaies/porte-monnaies.module.js";
 import {ComptesModule} from "./comptes/comptes.module.js";
+import {AuthModule} from "./auth/auth.module.js";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import {ComptesModule} from "./comptes/comptes.module.js";
         synchronize: config.get('DB_SYNCHRONIZE') === 'true', // ok en dev, jamais en prod
       }),
     }),
+    AuthModule,
     ComptesModule,
     PortemonnaiesModule,
   ],
