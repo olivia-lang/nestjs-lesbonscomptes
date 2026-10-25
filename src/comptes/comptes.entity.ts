@@ -12,10 +12,13 @@ export class Compte {
     @Column()
     prenom: string;
 
+    @Column()
+    pseudo: string;
+
     @Column({ unique: true })
     email: string;
 
-    @Column()
+    @Column({ select: false })
     motDePasse: string;
 
     @OneToMany(() => Portemonnaie, (pm) => pm.createur)
