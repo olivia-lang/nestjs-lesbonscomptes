@@ -6,6 +6,7 @@ import CreerCompte from "./components/comptes/CreateCompte.jsx";
 import Connexion from "./components/auth/Connexion.jsx";
 import Navbar from "./components/Navbar.jsx";
 import AuthProvider from "./auth/AuthProvider.jsx";
+import PortemonnaiesList from "./components/portemonnaies/PortemonnaiesList.jsx";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/connexion" element={<Connexion />} />
             <Route path="/comptes/nouveau" element={<CreerCompte />} />
+            <Route path="/portemonnaies" element={<PortemonnaiesList />} />
             <Route path="/portemonnaies/nouveau" element={<CreerPortemonnaie />} />
           </Routes>
         </AuthProvider>

@@ -5,6 +5,7 @@ import {ComptesModule} from "../comptes/comptes.module.js";
 import {AuthController} from "./auth.controller.js";
 import {JwtAuth} from "./jwt-auth.provider.js";
 import "./auth.types.js";
+import {PortemonnaiesModule} from "../portemonnaies/porte-monnaies.module.js";
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import "./auth.types.js";
             }),
         }),
         ComptesModule,
+        PortemonnaiesModule,
     ],
     controllers: [AuthController],
     providers: [JwtAuth],

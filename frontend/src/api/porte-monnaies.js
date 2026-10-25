@@ -1,7 +1,7 @@
 import { api } from './http';
 
-export const creerPortemonnaie = (libelle, compteId) =>
-    api.post('/portemonnaies', { libelle, compteId });
+export const creerPortemonnaie = (libelle) =>
+    api.post('/portemonnaies', { libelle });
 
-export const listerPortemonnaies = (compteId) =>
-    api.get(`/portemonnaies?compteId=${compteId}`);
+export const listerPortemonnaies = () =>
+    api.get(`/portemonnaies`);

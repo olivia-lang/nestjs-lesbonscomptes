@@ -1,6 +1,8 @@
 import {Body, Controller, Get, ParseIntPipe, Post, Query} from "@nestjs/common";
 import {PortemonnaiesService} from "./porte-monnaies.service.js";
 import {CreatePortemonnaieDto} from "./dto/create-portemonnaie.dto.js";
+import {CurrentUser} from "@nestjs/authentication";
+import {Compte} from "../comptes/comptes.entity.js";
 
 @Controller('portemonnaies')
 export class PortemonnaiesController {
@@ -12,7 +14,7 @@ export class PortemonnaiesController {
     }
 
     @Get()
-    findAllForCompte(@Query('compteId', ParseIntPipe) compteId: number) {
-        return this.portemonnaiesService.findAllForCompte(compteId);
+    findAllForCompte(@CurrentUser() compte: Compte) {
+        return this.portemonnaiesService.findAllForCompte(compte.id);
     }
 }

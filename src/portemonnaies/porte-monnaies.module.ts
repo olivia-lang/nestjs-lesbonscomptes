@@ -10,5 +10,6 @@ import {ComptesModule} from "../comptes/comptes.module.js";
     imports: [TypeOrmModule.forFeature([Portemonnaie, Participer]), ComptesModule],
     controllers: [PortemonnaiesController],
     providers: [PortemonnaiesService],
+    exports: [PortemonnaiesService],
 })
 export class PortemonnaiesModule {}
