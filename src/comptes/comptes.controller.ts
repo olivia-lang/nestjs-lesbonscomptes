@@ -14,6 +14,6 @@ export class ComptesController {
 
     @Post()
     create(@Body() dto: CreateCompteDto) {
-        return this.comptesService.create(dto.nom, dto.email, dto.motDePasse);
+        return this.comptesService.create(dto.prenom, dto.pseudo, dto.email, dto.motDePasse);
     }
 }

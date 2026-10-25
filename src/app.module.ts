@@ -21,7 +21,7 @@ import {ComptesModule} from "./comptes/comptes.module.js";
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
         entities: [Compte, Portemonnaie, Depense, Participer],
-        synchronize: false, // ok en dev, jamais en prod
+        synchronize: config.get('DB_SYNCHRONIZE') === 'true', // ok en dev, jamais en prod
       }),
     }),
     ComptesModule,
