@@ -1,10 +1,8 @@
 import {useState} from "react";
 import * as Yup from 'yup';
 import {ErrorMessage, Field, Form, Formik} from "formik";
+import {useNavigate} from "react-router";
 import {creerPortemonnaie} from "../../api/porte-monnaies.js";
-
-// à supprimer dès qu'on a l'auth
-const COMPTE_ID_SIMULE = 1;
 
 const schema = Yup.object({
     libelle: Yup.string()
@@ -14,11 +12,12 @@ const schema = Yup.object({
 export default function CreerPortemonnaie() {
     const [portemonnaieCree, setPortemonnaieCree] = useState(null);
     const [erreur, setErreur] = useState(null);
+    const navigate = useNavigate();
 
     async function handleSubmit(values, { resetForm, setSubmitting }) {
         setErreur(null);
         try {
-            const portemonnaie = await creerPortemonnaie(values.libelle, COMPTE_ID_SIMULE);
+            const portemonnaie = await creerPortemonnaie(values.libelle);
             setPortemonnaieCree(portemonnaie);
             resetForm();
         } catch (err) {
@@ -47,7 +46,7 @@ export default function CreerPortemonnaie() {
                                 </div>
                                 <ErrorMessage name="libelle" component="p" style={{ color: 'red' }} />
                                 <div className="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
-                                    <button type="submit" className="btn btn-outline-secondary">Annuler</button>
+                                    <button type="button" onClick={() => navigate('/portemonnaies')} className="btn btn-outline-secondary">Annuler</button>
                                     <button type="submit" disabled={isSubmitting} className="btn btn-outline-primary col-3">Créer</button>
                                 </div>
                             </Form>
