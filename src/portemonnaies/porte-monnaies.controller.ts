@@ -9,8 +9,8 @@ export class PortemonnaiesController {
     constructor(private readonly portemonnaiesService: PortemonnaiesService) {}
 
     @Post()
-    create(@Body() dto: CreatePortemonnaieDto) {
-        return this.portemonnaiesService.create(dto.libelle, dto.compteId);
+    create(@Body() dto: CreatePortemonnaieDto, @CurrentUser() user: Compte) {
+        return this.portemonnaiesService.create(dto.libelle, user.id);
     }
 
     @Get()
