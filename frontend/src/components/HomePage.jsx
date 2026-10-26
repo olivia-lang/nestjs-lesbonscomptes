@@ -25,7 +25,7 @@ function HomePage() {
     return <PortemonnaiesList />;
 }
 
-// ce que voit un compte connecté 
+// plus utilisé depuis la liste des porte-monnaies, gardé au cas où
 function TableauDeBord({ prenom }) {
     const [invitations, setInvitations] = useState(null);
     const [erreur, setErreur] = useState(null);
