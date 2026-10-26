@@ -48,7 +48,7 @@ export class PortemonnaiesService {
                 libelle: p.portemonnaie.libelle,
                 status: p.portemonnaie.status,
                 dateCreation: p.portemonnaie.dateCreation,
-                nombreParticipants: p.portemonnaie.participations.length,
+                nombreParticipants: p.portemonnaie.participations.filter((x) => x.dateAccepte !== null).length,
             }));
     }
 

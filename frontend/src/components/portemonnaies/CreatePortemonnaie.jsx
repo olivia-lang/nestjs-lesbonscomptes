@@ -3,6 +3,7 @@ import * as Yup from 'yup';
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {useNavigate} from "react-router";
 import {creerPortemonnaie} from "../../api/porte-monnaies.js";
+import {useAuth} from "../../auth/auth-context.js";
 
 const schema = Yup.object({
     libelle: Yup.string()
@@ -13,12 +14,14 @@ export default function CreerPortemonnaie() {
     const [portemonnaieCree, setPortemonnaieCree] = useState(null);
     const [erreur, setErreur] = useState(null);
     const navigate = useNavigate();
+    const { refreshPortemonnaies } = useAuth();
 
     async function handleSubmit(values, { resetForm, setSubmitting }) {
         setErreur(null);
         try {
             const portemonnaie = await creerPortemonnaie(values.libelle);
             setPortemonnaieCree(portemonnaie);
+            await refreshPortemonnaies();
             resetForm();
         } catch (err) {
             setErreur(err.message);
