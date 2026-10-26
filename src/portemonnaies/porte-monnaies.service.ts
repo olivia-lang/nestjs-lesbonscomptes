@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Portemonnaie} from "./entities/porte-monnaies.entity.js";
 import {Repository} from "typeorm";
@@ -50,6 +50,29 @@ export class PortemonnaiesService {
                 dateCreation: p.portemonnaie.dateCreation,
                 nombreParticipants: p.portemonnaie.participations.filter((x) => x.dateAccepte !== null).length,
             }));
+    }
+
+    async findOneForCompte(id: number, compteId: number) {
+        const portemonnaie = await this.portemonnaieRepository.findOne({
+            where: { id },
+            relations: { createur: true, participations: { compte: true } },
+        });
+        if (!portemonnaie) { throw new NotFoundException('Porte-monnaie introuvable'); }
+
+        const participants = portemonnaie.participations
+            .filter((p) => p.dateAccepte !== null)
+            .map((p) => p.compte);
+        // seuls les participants qui ont accepté peuvent voir le porte-monnaie
+        if (!participants.some((c) => c.id === compteId)) { throw new NotFoundException('Porte-monnaie introuvable'); }
+
+        return {
+            id: portemonnaie.id,
+            libelle: portemonnaie.libelle,
+            status: portemonnaie.status,
+            dateCreation: portemonnaie.dateCreation,
+            createur: portemonnaie.createur,
+            participants,
+        };
     }
 
 }
