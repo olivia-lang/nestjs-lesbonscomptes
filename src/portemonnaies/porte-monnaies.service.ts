@@ -34,4 +34,22 @@ export class PortemonnaiesService {
         return portemonnaie;
     }
 
+    async findAllForCompte(compteId: number) {
+        const participations = await this.participationRepository.find({
+            where: { compte: { id: compteId } },
+            relations: { portemonnaie: { participations: true }, compte: true },
+            order: { portemonnaie: { dateCreation: 'DESC' } },
+        });
+
+        return participations
+            .filter((p) => p.dateAccepte !== null)
+            .map((p) => ({
+                id: p.portemonnaie.id,
+                libelle: p.portemonnaie.libelle,
+                status: p.portemonnaie.status,
+                dateCreation: p.portemonnaie.dateCreation,
+                nombreParticipants: p.portemonnaie.participations.filter((x) => x.dateAccepte !== null).length,
+            }));
+    }
+
 }

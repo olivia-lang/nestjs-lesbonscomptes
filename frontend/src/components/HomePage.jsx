@@ -3,6 +3,7 @@ import {Link} from "react-router";
 import {useAuth} from "../auth/auth-context.js";
 import {mesInvitations} from "../api/invitations.js";
 import MesInvitations from "./invitations/MesInvitations.jsx";
+import PortemonnaiesList from "./portemonnaies/PortemonnaiesList.jsx";
 
 function HomePage() {
     const { compte } = useAuth();
@@ -15,16 +16,16 @@ function HomePage() {
                 <div className="d-flex gap-2 mt-3">
                     <Link to="/connexion" className="btn btn-primary">Se connecter</Link>
                     <Link to="/comptes/nouveau" className="btn btn-outline-primary">Créer un compte</Link>
-                    <Link to="/portemonnaies/nouveau" className="btn btn-outline-primary">Nouveau porte-monnaie</Link>
 
                 </div>
             </div>
         );
     }
-        return <TableauDeBord prenom={compte.prenom} />;
+
+    return <PortemonnaiesList />;
 }
 
-// ce que voit un compte connecté 
+// plus utilisé depuis la liste des porte-monnaies, gardé au cas où
 function TableauDeBord({ prenom }) {
     const [invitations, setInvitations] = useState(null);
     const [erreur, setErreur] = useState(null);

@@ -1,4 +1,4 @@
-import {Body, Controller, Post} from "@nestjs/common";
+import {Body, Controller, Get, Post} from "@nestjs/common";
 import {PortemonnaiesService} from "./porte-monnaies.service.js";
 import {CreatePortemonnaieDto} from "./dto/create-portemonnaie.dto.js";
 import {CurrentUser} from "@nestjs/authentication";
@@ -11,5 +11,10 @@ export class PortemonnaiesController {
     @Post()
     create(@Body() dto: CreatePortemonnaieDto, @CurrentUser() user: Compte) {
         return this.portemonnaiesService.create(dto.libelle, user.id);
+    }
+
+    @Get()
+    findAllForCompte(@CurrentUser() compte: Compte) {
+        return this.portemonnaiesService.findAllForCompte(compte.id);
     }
 }
