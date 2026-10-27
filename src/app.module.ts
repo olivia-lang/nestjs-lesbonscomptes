@@ -9,6 +9,7 @@ import {PortemonnaiesModule} from "./portemonnaies/porte-monnaies.module.js";
 import {ComptesModule} from "./comptes/comptes.module.js";
 import {AuthModule} from "./auth/auth.module.js";
 import {InvitationsModule} from "./invitations/invitations.module.js";
+import {DepensesModule} from "./depenses/depenses.module.js";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import {InvitationsModule} from "./invitations/invitations.module.js";
     ComptesModule,
     PortemonnaiesModule,
     InvitationsModule,
+    DepensesModule,
   ],
 })
 export class AppModule {}

@@ -12,7 +12,7 @@ export class DepensesService {
                 @InjectRepository(Portemonnaie) private readonly portemonnaieRepository: Repository<Portemonnaie>,
                 @InjectRepository(Participer) private readonly participerRepository: Repository<Participer>,) {}
 
-    async create(libelle: string, montant: number, portemonnaieId:number, compteId: number, saisiPar: Compte, payeurId: number) {
+    async create(libelle: string, montant: number, portemonnaieId:number, compteId: number, saisiPar: Compte, payeurId: number|undefined): Promise<Depense> {
         // récupération du portemonnaie
         const portemonnaie = await this.portemonnaieRepository.findOneBy({ id: portemonnaieId });
         if (!portemonnaie) throw new NotFoundException('Porte-monnaie introuvable');
@@ -32,8 +32,6 @@ export class DepensesService {
         depense.saisiPar = saisiPar;
 
         return this.depenseRepository.save(depense);
-
-        return portemonnaie;
     }
 
     private async verifierParticipant(portemonnaieId: number, compteId: number) {
