@@ -5,3 +5,6 @@ export const creerPortemonnaie = (libelle) =>
 
 export const listerPortemonnaies = () =>
     api.get(`/portemonnaies`);
+
+export const getPortemonnaie = (id) =>
+    api.get(`/portemonnaies/${id}`);
