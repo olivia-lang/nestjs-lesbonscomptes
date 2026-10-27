@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar.jsx";
 import AuthProvider from "./auth/AuthProvider.jsx";
 import PortemonnaiesList from "./components/portemonnaies/PortemonnaiesList.jsx";
 import PortemonnaieDetail from "./components/portemonnaies/PortemonnaieDetail.jsx";
+import CreerDepense from "./components/depenses/CreerDepense.jsx";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
             <Route path="/portemonnaies" element={<PortemonnaiesList />} />
             <Route path="/portemonnaies/nouveau" element={<CreerPortemonnaie />} />
             <Route path="/portemonnaies/:id" element={<PortemonnaieDetail />} />
+            <Route path="/portemonnaies/:id/depenses/nouveau" element={<CreerDepense />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

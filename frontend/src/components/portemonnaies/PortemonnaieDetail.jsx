@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import {getPortemonnaie} from "../../api/porte-monnaies.js";
 import {formatDateFr} from "../../utils/formatDate.js";
 
@@ -7,6 +7,7 @@ export default function PortemonnaieDetail() {
     const { id } = useParams();
     const [portemonnaie, setPortemonnaie] = useState(null);
     const [erreur, setErreur] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getPortemonnaie(id)
@@ -29,7 +30,7 @@ export default function PortemonnaieDetail() {
                 Créé le {formatDateFr(portemonnaie.dateCreation)} par @{portemonnaie.createur.pseudo}
             </p>
 
-            <div className="card p-3 bg-white">
+            <div className="card p-3 bg-white gap-3">
                 <h2 className="h5 mb-3">Participants ({portemonnaie.participants.length})</h2>
                 <ul className="list-group">
                     {portemonnaie.participants.map((c) => (
@@ -38,6 +39,7 @@ export default function PortemonnaieDetail() {
                         </li>
                     ))}
                 </ul>
+                <button type="button" onClick={() => navigate(`/portemonnaies/${id}/depenses/nouveau`)} className="btn btn-outline-success">Ajouter une dépense</button>
             </div>
         </div>
     );
