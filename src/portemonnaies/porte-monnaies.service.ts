@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from "@nestjs/common";
+import {BadRequestException, ForbiddenException, Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Portemonnaie} from "./entities/porte-monnaies.entity.js";
 import {Repository} from "typeorm";
@@ -73,6 +73,16 @@ export class PortemonnaiesService {
             createur: portemonnaie.createur,
             participants,
         };
+    }
+
+    async cloturer(id: number, compteId: number) {
+        const portemonnaie = await this.findOneForCompte(id, compteId);
+        if (portemonnaie.createur.id !== compteId) { throw new ForbiddenException('Seul le créateur peut clôturer le porte-monnaie'); }
+        if (!portemonnaie.status) { throw new BadRequestException('Le porte-monnaie est déjà clos'); }
+
+        await this.portemonnaieRepository.update(id, { status: false });
+        portemonnaie.status = false;
+        return portemonnaie;
     }
 
 }
