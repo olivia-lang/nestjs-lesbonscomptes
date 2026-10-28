@@ -8,3 +8,6 @@ export const listerPortemonnaies = () =>
 
 export const getPortemonnaie = (id) =>
     api.get(`/portemonnaies/${id}`);
+
+export const cloturerPortemonnaie = (id) =>
+    api.post(`/portemonnaies/${id}/cloturer`);
