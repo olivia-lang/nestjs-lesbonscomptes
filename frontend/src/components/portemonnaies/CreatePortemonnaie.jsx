@@ -33,30 +33,35 @@ export default function CreerPortemonnaie() {
     return (
         <>
             <div className="container mt-4">
-                <h3 className="h3 mb-3">Nouveau porte-monnaie</h3>
-
-                <div className="card p-3 bg-white">
+                <div className="card p-4 bg-white">
+                    <h3 className="h3 mt-3">Nouveau porte-monnaie</h3>
+                    <hr className="hr"/>
                     <Formik
-                        initialValues={{ libelle: '' }}
+                        initialValues={{libelle: ''}}
                         validationSchema={schema}
                         onSubmit={handleSubmit}
                     >
-                        {({ isSubmitting }) => (
+                        {({isSubmitting}) => (
                             <Form className="mt-4">
                                 <div className="mb-3">
                                     <label htmlFor="libelle" className="form-label">Nom du porte-monnaie</label>
-                                    <Field name="libelle" placeholder="Vacances à Paris" className="form-control col-3 bg-white" />
+                                    <Field name="libelle" placeholder="Vacances à Paris"
+                                           className="form-control col-3 bg-white"/>
                                 </div>
-                                <ErrorMessage name="libelle" component="p" style={{ color: 'red' }} />
+                                <ErrorMessage name="libelle" component="p" style={{color: 'red'}}/>
                                 <div className="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
-                                    <button type="button" onClick={() => navigate('/portemonnaies')} className="btn btn-outline-secondary">Annuler</button>
-                                    <button type="submit" disabled={isSubmitting} className="btn btn-outline-primary col-3">Créer</button>
+                                    <button type="button" onClick={() => navigate('/portemonnaies')}
+                                            className="btn btn-outline-secondary">Annuler
+                                    </button>
+                                    <button type="submit" disabled={isSubmitting}
+                                            className="btn btn-outline-primary col-3">Créer
+                                    </button>
                                 </div>
                             </Form>
                         )}
                     </Formik>
 
-                    {erreur && <p style={{ color: 'red' }}>{erreur}</p>}
+                    {erreur && <p style={{color: 'red'}}>{erreur}</p>}
                     {portemonnaieCree && (
                         <p>Porte-monnaie "{portemonnaieCree.libelle}" créé (id {portemonnaieCree.id})</p>
                     )}
