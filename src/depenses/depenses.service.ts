@@ -1,4 +1,4 @@
-import {ForbiddenException, Injectable, NotFoundException} from "@nestjs/common";
+import {BadRequestException, ForbiddenException, Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {IsNull, Not, Repository} from "typeorm";
 import {Depense} from "./depenses.entity.js";
@@ -18,6 +18,7 @@ export class DepensesService {
         if (!portemonnaie) throw new NotFoundException('Porte-monnaie introuvable');
 
         await this.verifierParticipant(portemonnaieId, saisiPar.id);
+        if (!portemonnaie.status) throw new BadRequestException('Le porte-monnaie est clos');
 
         // on récupère la personne qui a dépensé si ce n'est pas celle qui a saisi la dépense
         const payeur = payeurId && payeurId !== saisiPar.id ? await this.recupererParticipant(portemonnaieId, payeurId) : saisiPar;
