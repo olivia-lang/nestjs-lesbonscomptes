@@ -22,4 +22,9 @@ export class PortemonnaiesController {
     findOne(@Param('id', ParseIntPipe) id: number, @CurrentUser() compte: Compte) {
         return this.portemonnaiesService.findOneForCompte(id, compte.id);
     }
+
+    @Post(':id/cloturer')
+    cloturer(@Param('id', ParseIntPipe) id: number, @CurrentUser() compte: Compte) {
+        return this.portemonnaiesService.cloturer(id, compte.id);
+    }
 }
