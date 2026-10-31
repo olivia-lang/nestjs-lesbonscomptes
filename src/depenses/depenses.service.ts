@@ -35,6 +35,34 @@ export class DepensesService {
         return this.depenseRepository.save(depense);
     }
 
+    async findAllDepenses(portemonnaieId: number, compteId: number) {
+        const portemonnaie = await this.portemonnaieRepository.findOneBy({id: portemonnaieId});
+
+        if (!portemonnaie) throw new NotFoundException('Porte-monnaie introuvable');
+
+        await this.verifierParticipant(portemonnaieId, compteId);
+
+        const depenses = await this.depenseRepository.find({
+            where: { portemonnaie: { id: portemonnaieId } },
+            relations: { payeur: true, saisiPar: true },
+            order: { date_depense: 'DESC' },
+        });
+
+        const total = depenses.reduce((somme, d) => somme + d.montant, 0);
+
+        return {
+            depenses: depenses.map((d) => ({
+                id: d.id,
+                libelle: d.libelle,
+                montant: d.montant,
+                date: d.date_depense,
+                payeur: d.payeur ? { id: d.payeur.id, prenom: d.payeur.prenom, pseudo: d.payeur.pseudo } : null,
+                saisiPar: { id: d.saisiPar.id, prenom: d.saisiPar.prenom, pseudo: d.saisiPar.pseudo },
+            })),
+            total,
+        };
+    }
+
     private async verifierParticipant(portemonnaieId: number, compteId: number) {
         const existe = await this.participerRepository.exists({
             where: { portemonnaie: { id: portemonnaieId }, compte: { id: compteId }, dateAccepte: Not(IsNull()) },
