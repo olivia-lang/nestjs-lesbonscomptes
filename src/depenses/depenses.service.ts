@@ -49,6 +49,10 @@ export class DepensesService {
         });
 
         const total = depenses.reduce((somme, d) => somme + d.montant, 0);
+        // seules les dépenses payées par le compte comptent, pas celles qu'il a saisies pour un autre
+        const monTotal = depenses
+            .filter((d) => d.payeur?.id === compteId)
+            .reduce((somme, d) => somme + d.montant, 0);
 
         return {
             depenses: depenses.map((d) => ({
@@ -60,6 +64,7 @@ export class DepensesService {
                 saisiPar: { id: d.saisiPar.id, prenom: d.saisiPar.prenom, pseudo: d.saisiPar.pseudo },
             })),
             total,
+            monTotal,
         };
     }
 

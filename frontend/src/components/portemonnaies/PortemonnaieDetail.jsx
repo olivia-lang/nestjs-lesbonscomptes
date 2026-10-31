@@ -11,6 +11,7 @@ export default function PortemonnaieDetail() {
     const [portemonnaie, setPortemonnaie] = useState(null);
     const [depenses, setDepenses] = useState(null);
     const [total, setTotal] = useState(0);
+    const [monTotal, setMonTotal] = useState(0);
     const [erreur, setErreur] = useState(null);
     const navigate = useNavigate();
 
@@ -20,9 +21,10 @@ export default function PortemonnaieDetail() {
             .catch((err) => setErreur(err.message));
 
         getDepenses(id)
-            .then(({ depenses, total }) => {
+            .then(({ depenses, total, monTotal }) => {
                 setDepenses(depenses);
                 setTotal(total);
+                setMonTotal(monTotal);
             })
             .catch((err) => setErreur(err.message));
     }, [id]);
@@ -71,6 +73,23 @@ export default function PortemonnaieDetail() {
                     <button type="button" onClick={() => navigate(`/portemonnaies/${id}/depenses/nouveau`)} className="btn btn-outline-success">Ajouter une dépense</button>
                 )}
             </div>
+
+            {depenses && (
+                <div className="row g-3 mt-1">
+                    <div className="col-sm-6">
+                        <div className="card p-3 bg-white">
+                            <span className="text-muted small">Mes dépenses</span>
+                            <strong className="fs-4">{monTotal.toFixed(2)} €</strong>
+                        </div>
+                    </div>
+                    <div className="col-sm-6">
+                        <div className="card p-3 bg-white">
+                            <span className="text-muted small">Total du porte-monnaie</span>
+                            <strong className="fs-4">{total.toFixed(2)} €</strong>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="card p-3 bg-white gap-3 mt-4">
                 {!depenses ? (
