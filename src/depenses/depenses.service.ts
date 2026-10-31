@@ -49,6 +49,10 @@ export class DepensesService {
         });
 
         const total = depenses.reduce((somme, d) => somme + d.montant, 0);
+        // seules les dépenses payées par le compte comptent, pas celles qu'il a saisies pour un autre
+        const monTotal = depenses
+            .filter((d) => d.payeur?.id === compteId)
+            .reduce((somme, d) => somme + d.montant, 0);
 
         return {
             depenses: depenses.map((d) => ({
@@ -60,7 +64,27 @@ export class DepensesService {
                 saisiPar: { id: d.saisiPar.id, prenom: d.saisiPar.prenom, pseudo: d.saisiPar.pseudo },
             })),
             total,
+            monTotal,
         };
+    }
+
+    async supprimer(depenseId: number, portemonnaieId: number, compteId: number): Promise<void> {
+        const portemonnaie = await this.portemonnaieRepository.findOneBy({ id: portemonnaieId });
+        if (!portemonnaie) throw new NotFoundException('Porte-monnaie introuvable');
+
+        await this.verifierParticipant(portemonnaieId, compteId);
+        if (!portemonnaie.status) throw new BadRequestException('Le porte-monnaie est clos');
+
+        // la dépense doit appartenir à ce porte-monnaie, sinon on pourrait passer par un autre
+        const depense = await this.depenseRepository.findOne({
+            where: { id: depenseId, portemonnaie: { id: portemonnaieId } },
+            relations: { saisiPar: true },
+        });
+        if (!depense) throw new NotFoundException('Dépense introuvable');
+
+        if (depense.saisiPar.id !== compteId) throw new ForbiddenException('Seule la personne qui a ajouté la dépense peut la supprimer');
+
+        await this.depenseRepository.remove(depense);
     }
 
     private async verifierParticipant(portemonnaieId: number, compteId: number) {
