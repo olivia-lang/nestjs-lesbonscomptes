@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, ParseIntPipe, Post} from "@nestjs/common";
+import {Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post} from "@nestjs/common";
 import {DepensesService} from "./depenses.service.js";
 import {CreatePortemonnaieDto} from "./dto/create-depense.dto.js";
 import {CurrentUser} from "@nestjs/authentication";
@@ -17,5 +17,11 @@ export class DepensesController {
     @Get()
     getDepenses(@Param('id', ParseIntPipe) portemonnaieId: number, @CurrentUser() user: Compte) {
         return this.depensesService.findAllDepenses(portemonnaieId, user.id);
+    }
+
+    @Delete(':depenseId')
+    @HttpCode(204)
+    supprimer(@Param('depenseId', ParseIntPipe) depenseId: number, @Param('id', ParseIntPipe) portemonnaieId: number, @CurrentUser() user: Compte) {
+        return this.depensesService.supprimer(depenseId, portemonnaieId, user.id);
     }
 }

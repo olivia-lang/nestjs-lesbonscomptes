@@ -68,6 +68,25 @@ export class DepensesService {
         };
     }
 
+    async supprimer(depenseId: number, portemonnaieId: number, compteId: number): Promise<void> {
+        const portemonnaie = await this.portemonnaieRepository.findOneBy({ id: portemonnaieId });
+        if (!portemonnaie) throw new NotFoundException('Porte-monnaie introuvable');
+
+        await this.verifierParticipant(portemonnaieId, compteId);
+        if (!portemonnaie.status) throw new BadRequestException('Le porte-monnaie est clos');
+
+        // la dépense doit appartenir à ce porte-monnaie, sinon on pourrait passer par un autre
+        const depense = await this.depenseRepository.findOne({
+            where: { id: depenseId, portemonnaie: { id: portemonnaieId } },
+            relations: { saisiPar: true },
+        });
+        if (!depense) throw new NotFoundException('Dépense introuvable');
+
+        if (depense.saisiPar.id !== compteId) throw new ForbiddenException('Seule la personne qui a ajouté la dépense peut la supprimer');
+
+        await this.depenseRepository.remove(depense);
+    }
+
     private async verifierParticipant(portemonnaieId: number, compteId: number) {
         const existe = await this.participerRepository.exists({
             where: { portemonnaie: { id: portemonnaieId }, compte: { id: compteId }, dateAccepte: Not(IsNull()) },
