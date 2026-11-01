@@ -1,8 +1,8 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router";
 import {cloturerPortemonnaie, getPortemonnaie} from "../../api/porte-monnaies.js";
 import {formatDateFr} from "../../utils/formatDate.js";
-import {getDepenses} from "../../api/depenses.js";
+import {getDepenses, supprimerDepense} from "../../api/depenses.js";
 import {useAuth} from "../../auth/auth-context.js";
 
 export default function PortemonnaieDetail() {
@@ -11,8 +11,15 @@ export default function PortemonnaieDetail() {
     const [portemonnaie, setPortemonnaie] = useState(null);
     const [depenses, setDepenses] = useState(null);
     const [total, setTotal] = useState(0);
+    const [monTotal, setMonTotal] = useState(0);
     const [erreur, setErreur] = useState(null);
     const navigate = useNavigate();
+
+    const afficherDepenses = useCallback(({ depenses, total, monTotal }) => {
+        setDepenses(depenses);
+        setTotal(total);
+        setMonTotal(monTotal);
+    }, []);
 
     useEffect(() => {
         getPortemonnaie(id)
@@ -20,12 +27,9 @@ export default function PortemonnaieDetail() {
             .catch((err) => setErreur(err.message));
 
         getDepenses(id)
-            .then(({ depenses, total }) => {
-                setDepenses(depenses);
-                setTotal(total);
-            })
+            .then(afficherDepenses)
             .catch((err) => setErreur(err.message));
-    }, [id]);
+    }, [id, afficherDepenses]);
 
     async function cloturer() {
         if (!window.confirm('Clôturer ce porte-monnaie ? On ne pourra plus ajouter de dépense.')) return;
@@ -33,6 +37,17 @@ export default function PortemonnaieDetail() {
         try {
             setPortemonnaie(await cloturerPortemonnaie(id));
             await refreshPortemonnaies();
+        } catch (err) {
+            setErreur(err.message);
+        }
+    }
+
+    async function supprimer(depense) {
+        if (!window.confirm(`Supprimer la dépense « ${depense.libelle} » ? Cette action est définitive.`)) return;
+        setErreur(null);
+        try {
+            await supprimerDepense(id, depense.id);
+            afficherDepenses(await getDepenses(id));
         } catch (err) {
             setErreur(err.message);
         }
@@ -48,7 +63,7 @@ export default function PortemonnaieDetail() {
                 {portemonnaie.status
                     ? <span className="badge bg-success">Ouvert</span>
                     : <span className="badge bg-secondary">Clos</span>}
-                {portemonnaie.status && portemonnaie.createur.id === compte.id && (
+                {portemonnaie.status && portemonnaie.createur.id === compte?.id && (
                     <button type="button" onClick={cloturer} className="btn btn-outline-danger btn-sm ms-auto">Clôturer</button>
                 )}
             </div>
@@ -72,6 +87,23 @@ export default function PortemonnaieDetail() {
                 )}
             </div>
 
+            {depenses && (
+                <div className="row g-3 mt-1">
+                    <div className="col-sm-6">
+                        <div className="card p-3 bg-white">
+                            <span className="text-muted small">Mes dépenses</span>
+                            <strong className="fs-4">{monTotal.toFixed(2)} €</strong>
+                        </div>
+                    </div>
+                    <div className="col-sm-6">
+                        <div className="card p-3 bg-white">
+                            <span className="text-muted small">Total du porte-monnaie</span>
+                            <strong className="fs-4">{total.toFixed(2)} €</strong>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="card p-3 bg-white gap-3 mt-4">
                 {!depenses ? (
                     <p className="mb-0">Chargement...</p>
@@ -90,7 +122,12 @@ export default function PortemonnaieDetail() {
                                         Ajouté par {d.saisiPar ? `@${d.saisiPar.pseudo}` : 'personne'}
                                     </div>
                                 </div>
-                                <span>{d.montant.toFixed(2)} €</span>
+                                <div className="d-flex align-items-center gap-3">
+                                    <span>{d.montant.toFixed(2)} €</span>
+                                    {portemonnaie.status && d.saisiPar?.id === compte?.id && (
+                                        <button type="button" onClick={() => supprimer(d)} className="btn btn-outline-danger btn-sm">Supprimer</button>
+                                    )}
+                                </div>
                             </li>
                         ))}
                     </ul>
