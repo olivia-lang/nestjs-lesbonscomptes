@@ -9,7 +9,7 @@
 ## Introduction
 
 Dans le cadre du cours d'Infrastructures & Frameworks, nous avons créé ce projet afin de mettre en pratique le framework **NestJS** basé sur du TypeScript.
-Le front a été fait avec NextJS.
+Le front a été fait avec React et Vite.
 
 ## Fonctionnalités
 
@@ -32,16 +32,16 @@ A la racine du projet et à la racine du dossier <code>frontend/</code>, lancez 
 $ npm install
 ```
 
+Copiez le fichier <code>.env.example</code> en <code>.env</code> et remplissez les valeurs. Mettez bien <code>DB_SYNCHRONIZE=true</code>, sinon les tables ne sont pas créées au premier lancement vu que le projet n'a pas de migrations.
+
+Pour lancer la base de données, à la racine du projet, lancez la commande : 
+```bash
+$ docker compose up -d
+```
+
 Pour lancer NestJS, dans un terminal à la racine du projet, lancez cette commande : 
 ```bash
-# development
-$ npm run start
-
-# watch mode
 $ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 Pour lancer le front, dans un autre terminal, à la racine du dossier <code>frontend/</code>, lancez la commande : 
 ```bash
@@ -49,5 +49,5 @@ Pour lancer le front, dans un autre terminal, à la racine du dossier <code>fron
 $ npm run dev
 ```
 
-## 
+Le front est ensuite accessible sur http://localhost:5173 et l'API sur http://localhost:3000.
 
