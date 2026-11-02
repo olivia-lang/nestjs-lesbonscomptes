@@ -54,6 +54,23 @@ export class DepensesService {
             .filter((d) => d.payeur?.id === compteId)
             .reduce((somme, d) => somme + d.montant, 0);
 
+        const participations = await this.participerRepository.find({
+            where: { portemonnaie: { id: portemonnaieId }, dateAccepte: Not(IsNull()) },
+            relations: { compte: true },
+        });
+        // chacun doit payer la même part du total, le solde c'est ce qu'il a payé moins sa part
+        const part = total / participations.length;
+        const soldes = participations.map((p) => {
+            let paye = 0;
+            for (const d of depenses) {
+                if (d.payeur && d.payeur.id === p.compte.id) paye += d.montant;
+            }
+            return {
+                compte: { id: p.compte.id, prenom: p.compte.prenom, pseudo: p.compte.pseudo },
+                solde: Math.round((paye - part) * 100) / 100,
+            };
+        });
+
         return {
             depenses: depenses.map((d) => ({
                 id: d.id,
@@ -65,6 +82,7 @@ export class DepensesService {
             })),
             total,
             monTotal,
+            soldes,
         };
     }
 
