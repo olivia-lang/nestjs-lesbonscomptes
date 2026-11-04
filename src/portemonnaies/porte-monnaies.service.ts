@@ -1,7 +1,7 @@
 import {BadRequestException, ForbiddenException, Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Portemonnaie} from "./entities/porte-monnaies.entity.js";
-import {In, Repository} from "typeorm";
+import {In, IsNull, Not, Repository} from "typeorm";
 import {ComptesService} from "../comptes/comptes.service.js";
 import {Compte} from "../comptes/comptes.entity.js";
 import {Participer} from "./entities/participer.entity.js";
@@ -88,15 +88,15 @@ export class PortemonnaiesService {
         return portemonnaie;
     }
 
-    async addMember(id: number, accounts: number[], compteId: number) {
-        const compte = await this.portemonnaieRepository.find({
-            where: {createur : {id: compteId}, id: id},
+    async addMember(walletId: number, accounts: number[], compteId: number) {
+        const estMembre = await this.participationRepository.exists({
+            where: {compte: {id: compteId}, portemonnaie: {id: walletId}, dateAccepte: Not(IsNull())},
         });
-        if(!compte)throw new Error("404 - Not Found");
+        if (!estMembre) throw new NotFoundException("404 - Not Found");
         const participations = accounts.map((accId) =>
         this.participationRepository.create({
             dateInvitation: new Date(),
-            portemonnaie: { id },
+            portemonnaie: { id: walletId },
             compte: { id: accId },
         }),
     );
@@ -110,10 +110,10 @@ export class PortemonnaiesService {
             nameOremail="";
         }
 
-        const compte = await this.portemonnaieRepository.find({
-            where: {createur: {id: compteId}, id: walletId},
+        const estMembre = await this.participationRepository.exists({
+            where: {compte: {id: compteId}, portemonnaie: {id: walletId}, dateAccepte: Not(IsNull())},
         });
-        if (!compte) throw new NotFoundException("404 - Not Found");
+        if (!estMembre) throw new NotFoundException("404 - Not Found");
         //Récupération des utilisateurs matchant avec email.
         const users = (await this.compteRepository.findIdsByNameOrEmail(nameOremail)).map((resp) =>
             ({id: resp.id, userName: resp.pseudo, email: resp.email, alreadyInvited: false, alreadyPresent: false}));
