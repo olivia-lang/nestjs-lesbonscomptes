@@ -2,10 +2,11 @@ import {ConflictException, Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {PasswordHasher} from "@nestjs/authentication";
 import {Compte} from "./comptes.entity.js";
-import {QueryFailedError, Repository} from "typeorm";
+import {ILike, QueryFailedError, Repository} from "typeorm";
 
 @Injectable()
 export class ComptesService {
+    
     constructor(
         @InjectRepository(Compte) private readonly comptesRepo: Repository<Compte>,
         private readonly passwordHasher: PasswordHasher,
@@ -46,5 +47,18 @@ export class ComptesService {
             throw e;
         }
         return this.findById(compte.id);
+    }
+
+    findIdsByNameOrEmail(nameOremail: string) {
+        const term = `%${nameOremail.trim()}%`;
+        return this.comptesRepo.find({
+            where: [
+                {email: ILike(term)},
+                {pseudo: ILike(term)}
+            ],
+            order:{email: 'ASC'},
+            select: {id: true, pseudo:true, email:true},
+            
+        });
     }
 }
