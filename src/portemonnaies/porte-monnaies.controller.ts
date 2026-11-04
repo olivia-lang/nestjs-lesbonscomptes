@@ -31,7 +31,7 @@ export class PortemonnaiesController {
     @Post(':id/members')
     @HttpCode(200)
     addMember(@Param('id', ParseIntPipe)id : number, @Body() accounts: Array<number>,@CurrentUser() compte: Compte){
-        this.portemonnaiesService.addMember(id,accounts,compte.id)
+        return this.portemonnaiesService.addMember(id,accounts,compte.id)
     }
 
     @Get(':id/members/excluded')
