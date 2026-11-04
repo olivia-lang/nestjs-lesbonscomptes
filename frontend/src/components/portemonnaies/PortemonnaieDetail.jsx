@@ -8,6 +8,7 @@ import {formatDateFr} from "../../utils/formatDate.js";
 import {getDepenses, supprimerDepense} from "../../api/depenses.js";
 import {useAuth} from "../../auth/auth-context.js";
 import InviteMembres from "./invitation/InviteMembres.jsx";
+import ParticipantItem from "./participants/participantItem.jsx";
 
 export default function PortemonnaieDetail() {
     const { id } = useParams();
@@ -88,9 +89,7 @@ export default function PortemonnaieDetail() {
                 }
                 <ul className="list-group">
                     {portemonnaie.participants.map((c) => (
-                        <li key={c.id} className="list-group-item">
-                            {c.prenom} <small className="text-muted ms-1">@{c.pseudo}</small>
-                        </li>
+                        <ParticipantItem onClick={()=>{}} id={c.id} prenom={c.prenom} pseudo={c.pseudo}/>
                     ))}
                 </ul>
                 {portemonnaie.status && (
