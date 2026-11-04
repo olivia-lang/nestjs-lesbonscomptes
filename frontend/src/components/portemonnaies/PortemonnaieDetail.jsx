@@ -1,6 +1,11 @@
 import {useCallback, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router";
-import {cloturerPortemonnaie, getPortemonnaie} from "../../api/porte-monnaies.js";
+import {
+    ajouterMembres,
+    cloturerPortemonnaie,
+    getPortemonnaie,
+    listerCompteInvitable
+} from "../../api/porte-monnaies.js";
 import {formatDateFr} from "../../utils/formatDate.js";
 import {getDepenses, supprimerDepense} from "../../api/depenses.js";
 import {useAuth} from "../../auth/auth-context.js";
@@ -13,6 +18,10 @@ export default function PortemonnaieDetail() {
     const [total, setTotal] = useState(0);
     const [monTotal, setMonTotal] = useState(0);
     const [erreur, setErreur] = useState(null);
+    const [ajoutCompte, setAjoutCompte] = useState(false);
+    const [cptRefreshListInvite,setCptRefreshListInvite] = useState(1);
+    const [comptesInvitable,setComptesInvitable] = useState([]);
+    const [comptesInvitableFilter,setComptesInvitableFilter] = useState("");
     const navigate = useNavigate();
 
     const afficherDepenses = useCallback(({ depenses, total, monTotal }) => {
@@ -29,7 +38,12 @@ export default function PortemonnaieDetail() {
         getDepenses(id)
             .then(afficherDepenses)
             .catch((err) => setErreur(err.message));
+        
     }, [id, afficherDepenses]);
+
+    useEffect(()=>{
+        listerCompteInvitable(id,comptesInvitableFilter).then(setComptesInvitable).catch((err) => setErreur(err.message));;
+    }, [id,comptesInvitableFilter,cptRefreshListInvite]);
 
     async function cloturer() {
         if (!window.confirm('Clôturer ce porte-monnaie ? On ne pourra plus ajouter de dépense.')) return;
@@ -75,6 +89,31 @@ export default function PortemonnaieDetail() {
 
             <div className="card p-3 bg-white gap-3">
                 <h2 className="h5 mb-3">Participants ({portemonnaie.participants.length})</h2>
+                <button type="button" onClick={() => setAjoutCompte(!ajoutCompte)} className="btn btn-outline-success">Ajouter un compte</button>
+                {ajoutCompte &&(
+                    <>
+                        <label>Recherche par nom ou email : </label><input onChange={(e)=>setComptesInvitableFilter(e.target.value)} ></input>
+                        <div  className="list-group" >
+
+                            {comptesInvitable.map(
+                                (compteInvitable) => (
+                                    <button  type="button" className="list-group-item list-group-item-action small fw-medium text-start"
+                                             key={compteInvitable.id}
+                                             disabled={compteInvitable.alreadyPresent || compteInvitable.alreadyInvited}
+                                             onClick={()=>
+                                                ajouterMembres(id,[compteInvitable.id])
+                                                    .then((()=>setCptRefreshListInvite(cptRefreshListInvite+1)))
+                                                    .catch((err) => setErreur(err.message))
+                                             }
+                                    >
+                                        {compteInvitable.userName} - {compteInvitable.email} {compteInvitable.alreadyPresent ? "déja présent" : compteInvitable.alreadyInvited ? "(Invitation en attente)":""}
+
+                                    </button>)
+                            )}
+                        </div>
+                    </>)
+                    
+                }
                 <ul className="list-group">
                     {portemonnaie.participants.map((c) => (
                         <li key={c.id} className="list-group-item">
