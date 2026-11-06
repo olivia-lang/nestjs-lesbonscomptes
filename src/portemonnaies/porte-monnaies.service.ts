@@ -1,13 +1,16 @@
 import {BadRequestException, ForbiddenException, Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Portemonnaie} from "./entities/porte-monnaies.entity.js";
-import {Repository} from "typeorm";
+import {In, IsNull, Not, Repository} from "typeorm";
 import {ComptesService} from "../comptes/comptes.service.js";
 import {Compte} from "../comptes/comptes.entity.js";
 import {Participer} from "./entities/participer.entity.js";
+import { UserResearchDto } from "./dto/user-research.dto.js";
 
 @Injectable()
 export class PortemonnaiesService {
+
+
     constructor(@InjectRepository(Portemonnaie) private readonly portemonnaieRepository: Repository<Portemonnaie>,
                 @InjectRepository(Participer) private readonly participationRepository: Repository<Participer>,
                 private readonly compteRepository: ComptesService,) {
@@ -85,4 +88,55 @@ export class PortemonnaiesService {
         return portemonnaie;
     }
 
+    async addMember(walletId: number, accounts: number[], compteId: number) {
+        const estMembre = await this.participationRepository.exists({
+            where: {compte: {id: compteId}, portemonnaie: {id: walletId}, dateAccepte: Not(IsNull())},
+        });
+        if (!estMembre) throw new NotFoundException("404 - Not Found");
+        const participations = accounts.map((accId) =>
+        this.participationRepository.create({
+            dateInvitation: new Date(),
+            portemonnaie: { id: walletId },
+            compte: { id: accId },
+        }),
+    );
+
+    return this.participationRepository.save(participations);
+
+    }
+
+    async findInvitableMembers(walletId: number, nameOremail: string, compteId: number) {
+        if (!nameOremail){
+            nameOremail="";
+        }
+
+        const estMembre = await this.participationRepository.exists({
+            where: {compte: {id: compteId}, portemonnaie: {id: walletId}, dateAccepte: Not(IsNull())},
+        });
+        if (!estMembre) throw new NotFoundException("404 - Not Found");
+        //Récupération des utilisateurs matchant avec email.
+        const users = (await this.compteRepository.findIdsByNameOrEmail(nameOremail)).map((resp) =>
+            ({id: resp.id, userName: resp.pseudo, email: resp.email, alreadyInvited: false, alreadyPresent: false}));
+        //Récuperation des utilisateurs associé au portefeuille
+        if(users.length==0)return [];
+        const particpants = await this.participationRepository.find(
+            {
+                where:
+                    {
+                        portemonnaie: {
+                            id: walletId
+                        },
+                        compte:
+                            {id: In(users.map(user => user.id))}
+                    },
+                relations: { compte: true },
+                select: {id: true, dateAccepte: true, compte: {id: true}},
+            }
+        );
+        const participantStatus = new Map(particpants.map(p => [p.compte.id, p.dateAccepte]));
+        //Mise a jour de l'objet pour indiquer si l'utilisateur est dedans.
+        return users.map(u => (
+            {...u, alreadyInvited: participantStatus.has(u.id), alreadyPresent: participantStatus.get(u.id)!=null}
+        ));
+    }
 }

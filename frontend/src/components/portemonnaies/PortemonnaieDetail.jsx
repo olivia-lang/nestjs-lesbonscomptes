@@ -1,9 +1,14 @@
 import {useCallback, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router";
-import {cloturerPortemonnaie, getPortemonnaie} from "../../api/porte-monnaies.js";
+import {
+    cloturerPortemonnaie,
+    getPortemonnaie,
+} from "../../api/porte-monnaies.js";
 import {formatDateFr} from "../../utils/formatDate.js";
 import {getDepenses, supprimerDepense} from "../../api/depenses.js";
 import {useAuth} from "../../auth/auth-context.js";
+import InviteMembres from "./invitation/InviteMembres.jsx";
+import ParticipantItem from "./participants/participantItem.jsx";
 
 export default function PortemonnaieDetail() {
     const { id } = useParams();
@@ -13,7 +18,8 @@ export default function PortemonnaieDetail() {
     const [total, setTotal] = useState(0);
     const [monTotal, setMonTotal] = useState(0);
     const [erreur, setErreur] = useState(null);
-    const navigate = useNavigate();
+    const [ajoutCompte, setAjoutCompte] = useState(false);
+           const navigate = useNavigate();
 
     const afficherDepenses = useCallback(({ depenses, total, monTotal }) => {
         setDepenses(depenses);
@@ -29,7 +35,9 @@ export default function PortemonnaieDetail() {
         getDepenses(id)
             .then(afficherDepenses)
             .catch((err) => setErreur(err.message));
+        
     }, [id, afficherDepenses]);
+
 
     async function cloturer() {
         if (!window.confirm('Clôturer ce porte-monnaie ? On ne pourra plus ajouter de dépense.')) return;
@@ -75,11 +83,13 @@ export default function PortemonnaieDetail() {
 
             <div className="card p-3 bg-white gap-3">
                 <h2 className="h5 mb-3">Participants ({portemonnaie.participants.length})</h2>
+                <button type="button" onClick={() => setAjoutCompte(!ajoutCompte)} className="btn btn-outline-success">Ajouter un compte</button>
+                {ajoutCompte &&
+                    <InviteMembres setErreur={setErreur} walletId={id}/>
+                }
                 <ul className="list-group">
                     {portemonnaie.participants.map((c) => (
-                        <li key={c.id} className="list-group-item">
-                            {c.prenom} <small className="text-muted ms-1">@{c.pseudo}</small>
-                        </li>
+                        <ParticipantItem onClick={()=>{}} id={c.id} prenom={c.prenom} pseudo={c.pseudo}/>
                     ))}
                 </ul>
                 {portemonnaie.status && (

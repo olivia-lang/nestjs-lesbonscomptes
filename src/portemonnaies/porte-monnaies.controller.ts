@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, ParseIntPipe, Post} from "@nestjs/common";
+import {Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Body,Query} from "@nestjs/common";
 import {PortemonnaiesService} from "./porte-monnaies.service.js";
 import {CreatePortemonnaieDto} from "./dto/create-portemonnaie.dto.js";
 import {CurrentUser} from "@nestjs/authentication";
@@ -26,5 +26,17 @@ export class PortemonnaiesController {
     @Post(':id/cloturer')
     cloturer(@Param('id', ParseIntPipe) id: number, @CurrentUser() compte: Compte) {
         return this.portemonnaiesService.cloturer(id, compte.id);
+    }
+
+    @Post(':id/members')
+    @HttpCode(200)
+    addMember(@Param('id', ParseIntPipe)id : number, @Body() accounts: Array<number>,@CurrentUser() compte: Compte){
+        return this.portemonnaiesService.addMember(id,accounts,compte.id)
+    }
+
+    @Get(':id/members/excluded')
+    @HttpCode(200)
+    findInvitableMembers(@Param('id', ParseIntPipe)id : number, @Query('emailOrName') emailOrName: string, @CurrentUser() compte: Compte){
+        return this.portemonnaiesService.findInvitableMembers(id,emailOrName,compte.id);
     }
 }

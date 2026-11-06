@@ -11,3 +11,11 @@ export const getPortemonnaie = (id) =>
 
 export const cloturerPortemonnaie = (id) =>
     api.post(`/portemonnaies/${id}/cloturer`);
+
+export const listerCompteInvitable= (id,email)=>
+    api.get(`/portemonnaies/${id}/members/excluded?emailOrName=${email}`);
+
+export const ajouterMembres= (id,memberIds)=>
+    api.post(`/portemonnaies/${id}/members`,
+        memberIds
+    );
