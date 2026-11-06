@@ -17,14 +17,16 @@ export default function PortemonnaieDetail() {
     const [depenses, setDepenses] = useState(null);
     const [total, setTotal] = useState(0);
     const [monTotal, setMonTotal] = useState(0);
+    const [soldes, setSoldes] = useState([]);
     const [erreur, setErreur] = useState(null);
     const [ajoutCompte, setAjoutCompte] = useState(false);
            const navigate = useNavigate();
 
-    const afficherDepenses = useCallback(({ depenses, total, monTotal }) => {
+    const afficherDepenses = useCallback(({ depenses, total, monTotal, soldes }) => {
         setDepenses(depenses);
         setTotal(total);
         setMonTotal(monTotal);
+        setSoldes(soldes);
     }, []);
 
     useEffect(() => {
@@ -111,6 +113,22 @@ export default function PortemonnaieDetail() {
                             <strong className="fs-4">{total.toFixed(2)} €</strong>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {!portemonnaie.status && (
+                <div className="card p-3 bg-white gap-3 mt-4">
+                    <h2 className="h5 mb-0">Équilibres</h2>
+                    <ul className="list-group">
+                        {soldes.map((s) => (
+                            <li key={s.compte.id} className="list-group-item d-flex justify-content-between align-items-center bg-white">
+                                <span>{s.compte.prenom} <small className="text-muted ms-1">@{s.compte.pseudo}</small></span>
+                                <strong className={s.solde > 0 ? 'text-success' : s.solde < 0 ? 'text-danger' : 'text-muted'}>
+                                    {s.solde >= 0 ? '+' : ''}{s.solde.toFixed(2)} €
+                                </strong>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             )}
 
