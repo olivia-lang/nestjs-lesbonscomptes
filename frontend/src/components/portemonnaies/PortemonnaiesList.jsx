@@ -8,6 +8,7 @@ import FiltresPortemonnaies from "./PortemonnaiesFiltres.jsx";
 
 export default function PortemonnaiesList() {
     const { portemonnaies } = useAuth();
+    const { refreshPortemonnaies } = useAuth();
     const [invitations, setInvitations] = useState(null);
     const [erreur, setErreur] = useState(null);
     const [filtres, setFiltres] = useState("tous");
@@ -16,6 +17,7 @@ export default function PortemonnaiesList() {
         mesInvitations()
             .then(setInvitations)
             .catch((err) => setErreur(err.message));
+        refreshPortemonnaies();
     }, []);
 
     useEffect(handleInvitations, [handleInvitations]);
