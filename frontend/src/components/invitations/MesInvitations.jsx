@@ -14,6 +14,11 @@ export default function MesInvitations({ invitations, onChange }) {
         }
     }
 
+    async function refuser(inv){
+        if (!window.confirm(`Refuser l'invitation à "${inv.portemonnaie.libelle}" ?`)) return;
+        await repondre(refuserInvitation, inv.id);
+    }
+
     return (
         <section className="card p-3 bg-white">
             <h2 className="h5 mb-3">Mes invitations</h2>
@@ -30,7 +35,7 @@ export default function MesInvitations({ invitations, onChange }) {
                             </span>
                             <span className="d-flex gap-2">
                                 <button onClick={() => repondre(accepterInvitation, inv.id)} className="btn btn-success btn-sm">Accepter</button>
-                                <button onClick={() => repondre(refuserInvitation, inv.id)} className="btn btn-outline-danger btn-sm">Refuser</button>
+                                <button onClick={() => refuser(inv)} className="btn btn-outline-danger btn-sm">Refuser</button>
                             </span>
                         </li>
                     ))}
