@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router";
 import {
     cloturerPortemonnaie,
-    getPortemonnaie,
+    getPortemonnaie, retirerMembre,
 } from "../../api/porte-monnaies.js";
 import {formatDateFr} from "../../utils/formatDate.js";
 import {getDepenses, supprimerDepense} from "../../api/depenses.js";
@@ -17,16 +17,14 @@ export default function PortemonnaieDetail() {
     const [depenses, setDepenses] = useState(null);
     const [total, setTotal] = useState(0);
     const [monTotal, setMonTotal] = useState(0);
-    const [soldes, setSoldes] = useState([]);
     const [erreur, setErreur] = useState(null);
     const [ajoutCompte, setAjoutCompte] = useState(false);
            const navigate = useNavigate();
 
-    const afficherDepenses = useCallback(({ depenses, total, monTotal, soldes }) => {
+    const afficherDepenses = useCallback(({ depenses, total, monTotal }) => {
         setDepenses(depenses);
         setTotal(total);
         setMonTotal(monTotal);
-        setSoldes(soldes);
     }, []);
 
     useEffect(() => {
@@ -62,6 +60,16 @@ export default function PortemonnaieDetail() {
             setErreur(err.message);
         }
     }
+    async function supprimerMembre(membreId) {
+        setErreur(null);
+        try {
+            await retirerMembre(id, membreId);
+            setPortemonnaie(await getPortemonnaie(id));   // recharger les participants
+            afficherDepenses(await getDepenses(id));
+        } catch (err) {
+            setErreur(err.message);
+        }
+    }
 
     if (erreur && !portemonnaie) return <div className="container mt-4"><div className="alert alert-danger">{erreur}</div></div>;
     if (!portemonnaie) return <p>Chargement...</p>;
@@ -90,9 +98,19 @@ export default function PortemonnaieDetail() {
                     <InviteMembres setErreur={setErreur} walletId={id}/>
                 }
                 <ul className="list-group">
-                    {portemonnaie.participants.map((c) => (
-                        <ParticipantItem onClick={()=>{}} id={c.id} prenom={c.prenom} pseudo={c.pseudo}/>
-                    ))}
+                    {portemonnaie.participants.map((c) => {
+                        const estProtege = c.id === portemonnaie.createur?.id;
+                        return (
+                        <ParticipantItem onClick={()=>{
+                            if(!estProtege) {
+                                supprimerMembre(c.id)
+                                if(c.id === compte?.id){
+                                    navigate("../..")
+                                }
+                            }
+                        }
+                        } key={c.id} id={c.id} prenom={c.prenom} speudo={c.pseudo} estProtege={estProtege}/>
+                    )})}
                 </ul>
                 {portemonnaie.status && (
                     <button type="button" onClick={() => navigate(`/portemonnaies/${id}/depenses/nouveau`)} className="btn btn-outline-success">Ajouter une dépense</button>
@@ -113,22 +131,6 @@ export default function PortemonnaieDetail() {
                             <strong className="fs-4">{total.toFixed(2)} €</strong>
                         </div>
                     </div>
-                </div>
-            )}
-
-            {!portemonnaie.status && (
-                <div className="card p-3 bg-white gap-3 mt-4">
-                    <h2 className="h5 mb-0">Équilibres</h2>
-                    <ul className="list-group">
-                        {soldes.map((s) => (
-                            <li key={s.compte.id} className="list-group-item d-flex justify-content-between align-items-center bg-white">
-                                <span>{s.compte.prenom} <small className="text-muted ms-1">@{s.compte.pseudo}</small></span>
-                                <strong className={s.solde > 0 ? 'text-success' : s.solde < 0 ? 'text-danger' : 'text-muted'}>
-                                    {s.solde >= 0 ? '+' : ''}{s.solde.toFixed(2)} €
-                                </strong>
-                            </li>
-                        ))}
-                    </ul>
                 </div>
             )}
 

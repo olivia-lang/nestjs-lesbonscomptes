@@ -34,6 +34,12 @@ export class PortemonnaiesController {
         return this.portemonnaiesService.addMember(id,accounts,compte.id)
     }
 
+    @Delete(':id/members/:memberId')
+    @HttpCode(204)
+    removeMember(@Param('id', ParseIntPipe)walletId : number, @Param('memberId', ParseIntPipe)memberId : number,@CurrentUser() compte: Compte){
+        return this.portemonnaiesService.removeMember(walletId,memberId,compte.id)
+    }
+
     @Get(':id/members/excluded')
     @HttpCode(200)
     findInvitableMembers(@Param('id', ParseIntPipe)id : number, @Query('emailOrName') emailOrName: string, @CurrentUser() compte: Compte){
