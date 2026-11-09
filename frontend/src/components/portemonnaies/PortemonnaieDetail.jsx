@@ -46,6 +46,7 @@ export default function PortemonnaieDetail() {
         setErreur(null);
         try {
             setPortemonnaie(await cloturerPortemonnaie(id));
+            afficherDepenses(await getDepenses(id));
             await refreshPortemonnaies();
         } catch (err) {
             setErreur(err.message);
@@ -111,7 +112,7 @@ export default function PortemonnaieDetail() {
                                 }
                             }
                         }
-                        } key={c.id} id={c.id} prenom={c.prenom} speudo={c.pseudo} estProtege={estProtege}/>
+                        } key={c.id} id={c.id} prenom={c.prenom} pseudo={c.pseudo} estProtege={estProtege}/>
                     )})}
                 </ul>
                 {portemonnaie.status && (
