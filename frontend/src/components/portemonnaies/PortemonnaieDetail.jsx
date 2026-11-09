@@ -8,7 +8,7 @@ import {formatDateFr} from "../../utils/formatDate.js";
 import {getDepenses, supprimerDepense} from "../../api/depenses.js";
 import {useAuth} from "../../auth/auth-context.js";
 import InviteMembres from "./invitation/InviteMembres.jsx";
-import ParticipantItem from "./participants/participantItem.jsx";
+import ParticipantItem from "./participants/ParticipantItem.jsx";
 
 export default function PortemonnaieDetail() {
     const { id } = useParams();
