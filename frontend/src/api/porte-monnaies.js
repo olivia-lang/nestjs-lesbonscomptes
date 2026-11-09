@@ -19,3 +19,7 @@ export const ajouterMembres= (id,memberIds)=>
     api.post(`/portemonnaies/${id}/members`,
         memberIds
     );
+
+export const retirerMembre= (id,memberId)=>
+    api.delete(`/portemonnaies/${id}/members/${memberId}`
+    );

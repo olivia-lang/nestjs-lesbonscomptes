@@ -3,9 +3,8 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {Portemonnaie} from "./entities/porte-monnaies.entity.js";
 import {In, IsNull, Not, Repository} from "typeorm";
 import {ComptesService} from "../comptes/comptes.service.js";
-import {Compte} from "../comptes/comptes.entity.js";
 import {Participer} from "./entities/participer.entity.js";
-import { UserResearchDto } from "./dto/user-research.dto.js";
+
 
 @Injectable()
 export class PortemonnaiesService {
@@ -138,5 +137,28 @@ export class PortemonnaiesService {
         return users.map(u => (
             {...u, alreadyInvited: participantStatus.has(u.id), alreadyPresent: participantStatus.get(u.id)!=null}
         ));
+    }
+
+    async removeMember(walletId: number, removeUserId: number, currentUserId: number) {
+        if (!walletId || !removeUserId){
+            throw new BadRequestException("400 - Bad Request")
+        }
+        console.log("wallet id : " ,walletId)
+        const estMembre = await this.participationRepository.exists({
+            where: {compte: {id: currentUserId}, portemonnaie: {id: walletId}, dateAccepte: Not(IsNull())},
+        });
+        if (!estMembre) throw new NotFoundException("404 - Not Found");
+        //Récupération des utilisateurs matchant avec email.
+        const removeUserIsOwner = await this.portemonnaieRepository.exists({
+            where: {id: walletId, createur: {id: removeUserId}}
+        });
+        if(removeUserIsOwner)throw new BadRequestException("400 - Bad Request")
+
+        await this.participationRepository
+            .createQueryBuilder()
+            .delete()
+            .where( { compte:{id: removeUserId }, portemonnaie:{id: walletId}})
+            .execute();
+        return;
     }
 }
